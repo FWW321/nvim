@@ -7,6 +7,7 @@ return {
 		-- 'rafamadriz/friendly-snippets'
 		"nvim-tree/nvim-web-devicons",
 		"onsails/lspkind.nvim",
+		"fang2hou/blink-copilot",
 	},
 
 	-- use a release tag to download pre-built binaries
@@ -101,20 +102,34 @@ return {
 		sources = {
 			default = function()
 				local success, node = pcall(vim.treesitter.get_node)
-				-- 如果当前在注释区域，则只启用buffer补全
+				-- 如果当前在注释区域，则只启用copilot, buffer补全
 				if
 					success
 					and node
 					and vim.tbl_contains({ "comment", "line_comment", "block_comment" }, node:type())
 				then
-					return { "buffer" }
-				-- 默认使用lsp（语言服务器），path（路径），snippets（代码片段），buffer（缓冲区文本）
+					return { "copilot", "buffer" }
+				-- 默认使用copilot, lsp（语言服务器），path（路径），snippets（代码片段），buffer（缓冲区文本）
 				else
-					return { "lsp", "path", "snippets", "buffer" }
+					return { "copilot", "lsp", "path", "snippets", "buffer" }
 				end
 			end,
+			per_filetype = {
+				codecompanion = { "codecompanion" },
+			},
 			-- 补全源优先级
 			providers = {
+				-- copilot
+				copilot = {
+					name = "copilot",
+					module = "blink-copilot",
+					score_offset = 100,
+					async = true,
+					opts = {
+						kind_icon = "",
+						kind_hl = "DevIconCopilot",
+					},
+				},
 				-- 文件路径补全
 				path = {
 					score_offset = 95,

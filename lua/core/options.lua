@@ -33,3 +33,7 @@ opt.smartcase = true
 -- 外观
 opt.termguicolors = true
 opt.signcolumn = "yes"
+
+-- 编码
+opt.encoding = 'utf-8'
+opt.fileencoding = 'utf-8'

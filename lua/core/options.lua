@@ -2,12 +2,17 @@ local opt = vim.opt
 
 -- 行号
 opt.relativenumber = true
-opt.number = true;
+opt.number = true
 
--- 缩进
-opt.tabstop = 2
-opt.shiftwidth = 2
+-- 将tab转换为空格
 opt.expandtab = true
+-- 将tab转换为空格时的空格数
+opt.tabstop = 2
+-- 在一行的开头敲下tab时插入的空格数
+-- 换行时自动缩进的空格数
+-- 如果为0则使用tabstop的值
+opt.shiftwidth = 2
+-- 自动缩进
 opt.autoindent = true
 
 -- 防止包裹(即超出一行时不换行显示)
@@ -35,5 +40,11 @@ opt.termguicolors = true
 opt.signcolumn = "yes"
 
 -- 编码
-opt.encoding = 'utf-8'
-opt.fileencoding = 'utf-8'
+opt.encoding = "utf-8"
+opt.fileencoding = "utf-8"
+
+-- 文件被外部程序修改时自动加载
+opt.autoread = true
+
+-- 禁用neovim自己的模式显示
+opt.showmode = false

@@ -8,6 +8,7 @@ return {
 		"nvim-tree/nvim-web-devicons",
 		"onsails/lspkind.nvim",
 		"fang2hou/blink-copilot",
+		"folke/lazydev.nvim",
 	},
 
 	-- use a release tag to download pre-built binaries
@@ -34,7 +35,7 @@ return {
 		-- See :h blink-cmp-config-keymap for defining your own keymap
 		keymap = {
 			-- 使用预设按键
-			preset = "default",
+			preset = "none",
 			-- 向下选择补全项
 			-- ["<A-j>"] = { function(cmp) return cmp.select_next({ auto_insert = false }) end, "fallback", },
 			-- 向上选择补全项
@@ -55,9 +56,9 @@ return {
 			},
 
 			-- 向上滚动补全文档
-			-- ["<C-u>"] = { "scroll_documentation_up", "fallback" },
+			["<C-u>"] = { "scroll_documentation_up", "fallback" },
 			-- 向下滚动补全文档
-			-- ["<C-d>"] = { "scroll_documentation_down", "fallback" },
+			["<C-d>"] = { "scroll_documentation_down", "fallback" },
 
 			-- 确认选中当前补全项
 			["<Tab>"] = {
@@ -108,10 +109,10 @@ return {
 					and node
 					and vim.tbl_contains({ "comment", "line_comment", "block_comment" }, node:type())
 				then
-					return { "copilot", "buffer" }
+					return { "buffer" }
 				-- 默认使用copilot, lsp（语言服务器），path（路径），snippets（代码片段），buffer（缓冲区文本）
 				else
-					return { "copilot", "lsp", "path", "snippets", "buffer" }
+					return { "lazydev", "copilot", "lsp", "path", "snippets", "buffer" }
 				end
 			end,
 			per_filetype = {
@@ -119,6 +120,12 @@ return {
 			},
 			-- 补全源优先级
 			providers = {
+				-- lazydev
+				lazydev = {
+					name = "LazyDev",
+					module = "lazydev.integrations.blink",
+					-- make lazydev completions top priority(see `:h blink.cmp`)
+				},
 				-- copilot
 				copilot = {
 					name = "copilot",

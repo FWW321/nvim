@@ -96,7 +96,17 @@ return {
 				cursor = false,
 			},
 
-			statuscolumn = { enabled = true },
+			statuscolumn = {
+				enabled = true,
+				left = { "mark", "sign" }, -- priority of signs on the left (high to low)
+				right = { "fold", "git" }, -- priority of signs on the right (high to low)
+				folds = {
+					open = true, -- show open fold icons
+					git_hl = false, -- use Git Signs hl for fold icons
+				},
+				refresh = 50, -- refresh at most every 50ms
+			},
+
 			terminal = {
 				enabled = true,
 			},
@@ -220,28 +230,28 @@ return {
 				desc = "[Snacks] Lazygit",
 			},
 			{
-				"<leader>gl",
+				"<leader>ggl",
 				function()
 					require("snacks").picker.git_log()
 				end,
 				desc = "[Snacks] Git log",
 			},
 			{
-				"<leader>gd",
+				"<leader>ggd",
 				function()
 					require("snacks").picker.git_diff()
 				end,
 				desc = "[Snacks] Git diff",
 			},
 			{
-				"<leader>gb",
+				"<leader>ggb",
 				function()
 					require("snacks").git.blame_line()
 				end,
 				desc = "[Snacks] Git blame line",
 			},
 			{
-				"<leader>gB",
+				"<leader>ggB",
 				function()
 					require("snacks").gitbrowse()
 				end,

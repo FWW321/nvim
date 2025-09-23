@@ -1,5 +1,6 @@
 return {
 	{
+		-- 一些lsp需要下载wget
 		-- 命令行输入":Mason"启动Mason的控制面板
 		"mason-org/mason.nvim",
 		-- 懒加载插件
@@ -20,6 +21,9 @@ return {
 			ensure_installed = {
 				"lua-language-server",
 				"stylua",
+				"rust-analyzer",
+				"taplo",
+				"codespell",
 			},
 		},
 		-- 如果定义了config,则会自动将opts传入config(_, opts)中
@@ -48,78 +52,6 @@ return {
 		end,
 	},
 	{
-		-- 输入:LspInfo查看当前LSP服务器状态
-		-- Mason负责下载Lsp服务器，nvim-lspconfig负责配置LSP服务器
-		-- Mason中的Lsp名称与nvim-lspconfig中的Lsp名称不一定相同
-		-- 比如Mason中的lua-language-server对应nvim-lspconfig中的lua_ls
-		-- mason-lspconfig插件存储了Mason中Lsp与nvim-lspconfig中Lsp的对应关系
-		"neovim/nvim-lspconfig",
-		dependencies = { "saghen/blink.cmp", "mason-org/mason.nvim" },
-		config = function()
-			vim.diagnostic.config({
-				underline = false,
-				signs = false,
-				update_in_insert = false,
-				virtual_text = { spacing = 2, prefix = "●" },
-				severity_sort = true,
-				float = {
-					border = "rounded",
-				},
-			})
-
-			-- lsp 协议制定了一份规范，但是语言服务器和编辑器本身都不一定支持全部的特性
-			-- 所以和 lsp 建立连接的时候，编辑器需要告诉服务器自己支持什么功能，即capabilities
-			-- 为什么要手动设置capabilities？
-			-- 1.部分lsp不配置可能会出问题
-			-- 2.可以让lsp少返回一些内容，降低延迟
-			-- 3.获得一些有用的功能
-
-			-- 获取blink.cmp提供的lsp能力
-			local capabilities = require("blink.cmp").get_lsp_capabilities()
-
-			-- 设置lsp的capabilities
-			-- local lspconfig = require("lspconfig")
-			-- lspconfig["lua_ls"].setup({ capabilities = capabilities })
-			vim.lsp.config("lua_ls", { capabilities = capabilities })
-
-			vim.api.nvim_create_autocmd("LspAttach", {
-				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
-				callback = function(ev)
-					-- 显示悬停文档
-					vim.keymap.set("n", "K", vim.lsp.buf.hover)
-					-- 打开浮动诊断窗口
-					vim.keymap.set("n", "<leader>d", vim.diagnostic.open_float, {
-						buffer = ev.buf,
-						desc = "[LSP] Show diagnostic",
-					})
-					-- 显示函数签名帮助
-					vim.keymap.set("n", "<leader>gk", vim.lsp.buf.signature_help, { desc = "[LSP] signature help" })
-					-- 工作区文件夹(Workspace Folder)是指LSP服务器将进行代码分析、提供智能功能的根目录
-					-- 添加工作区文件夹
-					vim.keymap.set(
-						"n",
-						"<leader>wa",
-						vim.lsp.buf.add_workspace_folder,
-						{ desc = "[LSP] Add wordspace folder" }
-					)
-					-- 移除工作区文件夹
-					vim.keymap.set(
-						"n",
-						"<leader>wr",
-						vim.lsp.buf.remove_workspace_folder,
-						{ desc = "[LSP] Remove workspace folder" }
-					)
-					-- 列出工作区文件夹
-					vim.keymap.set("n", "<leader>wl", function()
-						print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-					end, { desc = "[LSP] List workspace folders" })
-					-- 重命名符号
-					vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, { buffer = ev.buf, desc = "[LSP] Rename" })
-				end,
-			})
-		end,
-	},
-	{
 		"folke/lazydev.nvim",
 		ft = "lua", -- only load on lua files
 		opts = {
@@ -138,6 +70,9 @@ return {
 		opts = {
 			formatters_by_ft = {
 				lua = { "stylua" },
+				-- 优先使用rustfmt，若不可用则回退到lsp的格式化功能
+				rust = { "rustfmt", lsp_format = "fallback" },
+				toml = { "taplo" },
 				-- Use the "_" filetype to run formatters on filetypes that don't
 				-- have other formatters configured.
 				["_"] = { "trim_whitespace" },
@@ -192,13 +127,14 @@ return {
 		cmd = "Trouble",
     -- stylua: ignore
     keys = {
+      -- 跳转到下一个/上一个诊断
       { "<A-j>", function() vim.diagnostic.jump({ count = 1 }) end,  mode = {"n"},  desc = "Go to next diagnostic"                            },
       { "<A-k>", function() vim.diagnostic.jump({ count = -1 }) end, mode = {"n"},  desc = "Go to previous diagnostic"                        },
-      { "<leader>gd", "<CMD>Trouble diagnostics toggle<CR>",                        desc = "[Trouble] Toggle buffer diagnostics"              },
-      { "<leader>gs", "<CMD>Trouble symbols toggle focus=false<CR>",                desc = "[Trouble] Toggle symbols "                        },
-      { "<leader>gl", "<CMD>Trouble lsp toggle focus=false win.position=right<CR>", desc = "[Trouble] Toggle LSP definitions/references/...", },
-      { "<leader>gL", "<CMD>Trouble loclist toggle<CR>",                            desc = "[Trouble] Location List"                          },
-      { "<leader>gq", "<CMD>Trouble qflist toggle<CR>",                             desc = "[Trouble] Quickfix List"                          },
+      { "<leader>td", "<CMD>Trouble diagnostics toggle<CR>",                        desc = "[Trouble] Toggle buffer diagnostics"              },
+      { "<leader>ts", "<CMD>Trouble symbols toggle focus=false<CR>",                desc = "[Trouble] Toggle symbols "                        },
+      { "<leader>tl", "<CMD>Trouble lsp toggle focus=false win.position=right<CR>", desc = "[Trouble] Toggle LSP definitions/references/...", },
+      { "<leader>tL", "<CMD>Trouble loclist toggle<CR>",                            desc = "[Trouble] Location List"                          },
+      { "<leader>tq", "<CMD>Trouble qflist toggle<CR>",                             desc = "[Trouble] Quickfix List"                          },
 
       -- { "grr", "<CMD>Trouble lsp_references focus=true<CR>",         mode = { "n" }, desc = "[Trouble] LSP references"                        },
       -- { "gD", "<CMD>Trouble lsp_declarations focus=true<CR>",        mode = { "n" }, desc = "[Trouble] LSP declarations"                      },

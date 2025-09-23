@@ -1,4 +1,5 @@
 -- 需要安装nodejs
+-- 执行:Copilot auth登录
 return {
 	{
 		"zbirenbaum/copilot.lua",

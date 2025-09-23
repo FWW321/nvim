@@ -7,3 +7,13 @@
 require("core.options")
 require("core.keymaps")
 require("core.lazy")
+require("core.lsp")
+
+-- 检查是否在 WSL 环境中
+local is_wsl = function()
+	return vim.fn.has("wsl") == 1
+end
+
+if is_wsl() then
+	require("core.wsl")
+end

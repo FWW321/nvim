@@ -23,7 +23,6 @@ return {
 				"stylua",
 				"rust-analyzer",
 				"taplo",
-				"codespell",
 			},
 		},
 		-- 如果定义了config,则会自动将opts传入config(_, opts)中
@@ -101,25 +100,6 @@ return {
 				:map("<leader>tf")
 		end,
 	},
-	{
-		-- 许多lsp都带有lint功能,所以有时候不需要额外的lint插件
-		"mfussenegger/nvim-lint",
-		event = "BufWritePost",
-		config = function()
-			vim.api.nvim_create_autocmd({ "BufWritePost" }, {
-				callback = function()
-					-- try_lint without arguments runs the linters defined in `linters_by_ft`
-					-- for the current filetype
-					require("lint").try_lint()
-
-					-- You can call `try_lint` with a linter name or a list of names to always
-					-- run specific linters, independent of the `linters_by_ft` configuration
-					-- codespell检查单词拼写，可以在Mason中下载
-					require("lint").try_lint("codespell")
-				end,
-			})
-		end,
-	},
 
 	{
 		-- 查看诊断信息、symbols（符号）等
@@ -130,7 +110,7 @@ return {
       -- 跳转到下一个/上一个诊断
       { "<A-j>", function() vim.diagnostic.jump({ count = 1 }) end,  mode = {"n"},  desc = "Go to next diagnostic"                            },
       { "<A-k>", function() vim.diagnostic.jump({ count = -1 }) end, mode = {"n"},  desc = "Go to previous diagnostic"                        },
-      { "<leader>td", "<CMD>Trouble diagnostics toggle<CR>",                        desc = "[Trouble] Toggle buffer diagnostics"              },
+      -- { "<leader>td", "<CMD>Trouble diagnostics toggle<CR>",                        desc = "[Trouble] Toggle buffer diagnostics"              },
       { "<leader>ts", "<CMD>Trouble symbols toggle focus=false<CR>",                desc = "[Trouble] Toggle symbols "                        },
       { "<leader>tl", "<CMD>Trouble lsp toggle focus=false win.position=right<CR>", desc = "[Trouble] Toggle LSP definitions/references/...", },
       { "<leader>tL", "<CMD>Trouble loclist toggle<CR>",                            desc = "[Trouble] Location List"                          },

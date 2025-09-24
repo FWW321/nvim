@@ -27,6 +27,8 @@ return {
 
 		init = function()
 			require("utils.codecompanion_fidget_spinner"):init()
+			-- 将cc扩展为CodeCompanion
+			vim.cmd([[cab cc CodeCompanion]])
 		end,
 
 		keys = {
@@ -38,15 +40,6 @@ return {
 				noremap = true,
 				silent = true,
 				desc = "CodeCompanion actions",
-			},
-			{
-				-- 行内询问，以diff的形式显示，ga接受，gr拒绝
-				"<leader>cci",
-				"<CMD>CodeCompanion<CR>",
-				mode = { "n", "v" },
-				noremap = true,
-				silent = true,
-				desc = "CodeCompanion inline",
 			},
 			{
 				"<leader>ccc",

@@ -114,8 +114,8 @@ return {
 		end,
 		lazy = false,
 		keys = {
-			{ "<A-<>", "<CMD>BufferMovePrevious<CR>", mode = { "n" }, desc = "[Buffer] Move buffer left" },
-			{ "<A->>", "<CMD>BufferMoveNext<CR>", mode = { "n" }, desc = "[Buffer] Move buffer right" },
+			{ "<A-Left>", "<CMD>BufferMovePrevious<CR>", mode = { "n" }, desc = "[Buffer] Move buffer left" },
+			{ "<A-Right>", "<CMD>BufferMoveNext<CR>", mode = { "n" }, desc = "[Buffer] Move buffer right" },
 			{ "<A-1>", "<CMD>BufferGoto 1<CR>", mode = { "n" }, desc = "[Buffer] Go to buffer 1" },
 			{ "<A-2>", "<CMD>BufferGoto 2<CR>", mode = { "n" }, desc = "[Buffer] Go to buffer 2" },
 			{ "<A-3>", "<CMD>BufferGoto 3<CR>", mode = { "n" }, desc = "[Buffer] Go to buffer 3" },
@@ -172,10 +172,10 @@ return {
 			--   If not available, we use `mini` as the fallback
 			-- { "rcarriga/nvim-notify", opts = { background_colour = "#000000" } },
 		},
-		keys = {
-			{ "<leader>sN", "<CMD>Noice pick<CR>", desc = "[Noice] Pick history messages" }, -- FIXME: Currently unusable
-			{ "<leader>N", "<CMD>Noice<CR>", desc = "[Noice] Show history messages" },
-		},
+		-- keys = {
+		-- 	{ "<leader>sN", "<CMD>Noice pick<CR>", desc = "[Noice] Pick history messages" }, -- FIXME: Currently unusable
+		-- 	{ "<leader>N", "<CMD>Noice<CR>", desc = "[Noice] Show history messages" },
+		-- },
 
 		opts = {
 			popupmenu = {
@@ -212,10 +212,16 @@ return {
 		"echasnovski/mini.diff",
 		event = "BufReadPost",
 		version = "*",
-    -- stylua: ignore
-    keys = {
-      { "<leader>to", function() require("mini.diff").toggle_overlay(vim.api.nvim_get_current_buf()) end, mode = "n", desc = "[Mini.Diff] Toggle diff overlay", },
-    },
+		keys = {
+			{
+				"<leader>to",
+				function()
+					require("mini.diff").toggle_overlay(vim.api.nvim_get_current_buf())
+				end,
+				mode = "n",
+				desc = "[Mini.Diff] Toggle diff overlay",
+			},
+		},
 		opts = {
 			-- Module mappings. Use `''` (empty string) to disable one.
 			-- NOTE: Mappings are handled by gitsigns.
@@ -259,8 +265,13 @@ return {
 			end,
 		},
 		keys = {
-      -- stylua: ignore
-      { "<leader>?", function() require("which-key").show({ global = false }) end, desc = "[Which-key] Buffer Local Keymaps", },
+			{
+				"<leader>?",
+				function()
+					require("which-key").show({ global = false })
+				end,
+				desc = "[Which-key] Buffer Local Keymaps",
+			},
 		},
 	},
 	{
@@ -513,7 +524,7 @@ return {
 			end
 
 			-- Keymaps
-			vim.keymap.set("n", "K", function()
+			vim.keymap.set("n", "T", function()
 				local winid = require("ufo").peekFoldedLinesUnderCursor()
 				if not winid then
 					vim.lsp.buf.hover()

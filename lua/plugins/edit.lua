@@ -63,22 +63,42 @@ return {
 			},
 		},
 		keys = {
-      -- stylua: ignore
-      { "<leader>f", mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "[Flash] Jump"              },
-      -- stylua: ignore
-      { "<leader>F", mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "[Flash] Treesitter"        }, -- stylua: ignore
 			{
-				"<leader>F",
-				mode = { "o", "x" },
+				"<leader>fj",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").jump()
+				end,
+				desc = "[Flash] Jump",
+			},
+			{
+				"<leader>ft",
+				mode = { "n", "x", "o" },
+				function()
+					require("flash").treesitter()
+				end,
+				desc = "[Flash] Treesitter",
+			},
+			{
+				"<leader>fs",
+				mode = { "n", "o", "x" },
 				function()
 					require("flash").treesitter_search()
 				end,
 				desc = "[Flash] Treesitter Search",
 			},
-      -- stylua: ignore
-      { "<c-f>",     mode = { "c" },           function() require("flash").toggle() end,            desc = "[Flash] Toggle Search"     },
+			-- 对常规搜索启用闪搜的开关
 			{
-				"<leader>j",
+				"<c-f>",
+				mode = { "c" },
+				function()
+					require("flash").toggle()
+				end,
+				desc = "[Flash] Toggle Search",
+			},
+			-- 跳转到行首（包括空行）
+			{
+				"<leader>fl",
 				mode = { "n", "x", "o" },
 				function()
 					require("flash").jump({
@@ -90,18 +110,27 @@ return {
 				end,
 				desc = "[Flash] Line jump",
 			},
+			-- 跳转到非空行的行尾
 			{
-				"<leader>k",
-				mode = { "n", "x", "o" },
+				"<leader>fe",
+				mode = { "n", "x", "o" }, -- 支持 Normal/Visual/Operator-pending 模式
 				function()
 					require("flash").jump({
-						search = { mode = "search", max_length = 0 },
-						label = { after = { 0, 0 }, matches = false },
-						jump = { pos = "end" },
-						pattern = "^\\s*\\S\\?", -- match non-whitespace at start plus any character (ignores empty lines)
+						search = {
+							mode = "search", -- 使用正则搜索
+							max_length = 0, -- 不限制匹配长度
+						},
+						pattern = [[\S\zs.*$]], -- 匹配非空行的行尾（\S 为非空白字符，\zs 重置匹配起点）
+						label = {
+							after = { 0, 0 }, -- 标签显示在匹配项后
+							matches = false, -- 不显示所有匹配项的标签
+						},
+						jump = {
+							pos = "end", -- 跳转到匹配项的结尾
+						},
 					})
 				end,
-				desc = "[Flash] Line jump",
+				desc = "[Flash] Jump to line end (non-empty)",
 			},
 		},
 	},
@@ -117,6 +146,7 @@ return {
 		keys = {
 			{
 				"<leader>nf",
+				mode = { "n" },
 				function()
 					require("neogen").generate({ type = "func" })
 				end,
@@ -124,6 +154,7 @@ return {
 			},
 			{
 				"<leader>nc",
+				mode = { "n" },
 				function()
 					require("neogen").generate({ type = "class" })
 				end,
@@ -134,6 +165,7 @@ return {
 		-- Uncomment next line if you want to follow only stable versions
 		-- version = "*"
 	},
+	-- 需要安装ripgrep
 	{
 		-- 注释 TODO, FIX等高亮显示
 		"folke/todo-comments.nvim",
@@ -141,15 +173,39 @@ return {
 			"nvim-lua/plenary.nvim",
 			"folke/snacks.nvim",
 		},
+		enabled = true,
 		event = "VeryLazy",
-    -- stylua: ignore
-    keys = {
-      ---@diagnostic disable-next-line: undefined-field
-      { "<leader>st", function() require("snacks").picker.todo_comments({ keywords = { "TODO", "FIX", "FIXME", "BUG", "FIXIT", "HACK", "WARN", "ISSUE"  } }) end, desc = "[TODO] Pick todos (without NOTE)", },
-      ---@diagnostic disable-next-line: undefined-field
-      { "<leader>sT", function() require("snacks").picker.todo_comments() end, desc = "[TODO] Pick todos (with NOTE)", },
-    },
-		config = true,
+		opts = {
+			highlight = {
+				multiline = false, -- 是否高亮多行注释中的关键词
+				-- vim正则表达式，用来高亮，KEYWORDS会被替换为实际的关键词列表
+				pattern = [[.*<((KEYWORDS)%(\(.{-1,}\))?):]],
+			},
+			search = {
+				-- 用于ripgrep的正则，用来搜索
+				pattern = [[\b(KEYWORDS)(\(\w*\))*:]],
+			},
+		},
+		keys = {
+			{
+				"<leader>st",
+				mode = { "n" },
+				function()
+					Snacks.picker.todo_comments({
+						keywords = { "TODO", "FIX", "FIXME", "BUG", "FIXIT", "HACK", "WARN", "ISSUE" },
+					})
+				end,
+				desc = "[TODO] Pick todos (without NOTE)",
+			},
+			{
+				"<leader>sT",
+				mode = { "n" },
+				function()
+					Snacks.picker.todo_comments()
+				end,
+				desc = "[TODO] Pick todos (with NOTE)",
+			},
+		},
 	},
 
 	{
@@ -158,10 +214,22 @@ return {
 		version = "*",
 		event = "BufReadPost",
 		config = true,
-		keys = {
-			-- Disable the vanilla `s` keybinding
-			-- 禁用了vim的s键绑定，即删除字符并进入插入模式的功能
-			{ "s", "<NOP>", mode = { "n", "x", "o" } },
+		-- keys = {
+		-- 	-- Disable the vanilla `s` keybinding
+		-- 	-- 禁用了vim的s键绑定，即删除字符并进入插入模式的功能
+		-- 	{ "s", "<NOP>", mode = { "n", "x", "o" } },
+		-- },
+		mappings = {
+			add = "sa",
+			delete = "sd",
+			find = "sf",
+			find_left = "sF",
+			highlight = "sh",
+			replace = "sr",
+			update_n_lines = "sn",
+
+			suffix_last = "l",
+			suffix_next = "n",
 		},
 	},
 

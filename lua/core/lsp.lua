@@ -16,9 +16,9 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- 获取LSP客户端
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 		-- 跳转到定义 goto definition
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf, desc = "[LSP] Go to definition" })
+		-- vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf, desc = "[LSP] Go to definition" })
 		-- 跳转到声明 goto declaration
-		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = event.buf, desc = "[LSP] Go to declaration" })
+		-- vim.keymap.set("n", "gD", vim.lsp.buf.declaration, { buffer = event.buf, desc = "[LSP] Go to declaration" })
 		-- 显示悬停文档
 		vim.keymap.set("n", "K", vim.lsp.buf.hover)
 		-- 打开浮动诊断窗口
@@ -53,7 +53,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- 需要lsp支持
 		-- 显示函数参数和变量类型等信息
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
-			vim.keymap.set("n", "<leader>ih", function()
+			vim.keymap.set("n", "<leader>th", function()
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
 			end, { buffer = event.buf, desc = "[LSP] Toggle inlay hints" })
 		end

@@ -15,11 +15,11 @@ return {
 			-- 1.支持Kitty Graphics Protocol的终端（如kitty，ghostty，wezterm等）
 			-- 2.下载imagemagick: 图片转换
 			-- 3.下载tectonic: LaTeX公式渲染
-			image = {
-				enabled = true,
-				doc = { inline = false, float = false, max_width = 80, max_height = 40 },
-				math = { latex = { font_size = "small" } },
-			},
+			-- image = {
+			-- 	enabled = true,
+			-- 	doc = { inline = false, float = false, max_width = 80, max_height = 40 },
+			-- 	math = { latex = { font_size = "small" } },
+			-- },
 			indent = {
 				enabled = true,
 				animate = {
@@ -64,6 +64,9 @@ return {
 				sources = {
 					spelling = {
 						layout = { preset = "select" },
+					},
+					todo_comments = {
+						hidden = true,
 					},
 				},
 				win = {
@@ -126,7 +129,7 @@ return {
 
 		keys = {
 			{
-				"<A-w>",
+				"<A-d>",
 				function()
 					require("snacks").bufdelete()
 				end,
@@ -140,7 +143,7 @@ return {
 				desc = "[Snacks] Display image",
 			},
 			{
-				"<A-i>",
+				"<A-t>",
 				function()
 					require("snacks").terminal()
 				end,
@@ -155,13 +158,13 @@ return {
 				end,
 				desc = "[Snacks] Notification history",
 			},
-			{
-				"<leader>n",
-				function()
-					require("snacks").notifier.show_history()
-				end,
-				desc = "[Snacks] Notification history",
-			},
+			-- {
+			-- 	"<leader>n",
+			-- 	function()
+			-- 		require("snacks").notifier.show_history()
+			-- 	end,
+			-- 	desc = "[Snacks] Notification history",
+			-- },
 			{
 				"<leader>un",
 				function()
@@ -177,21 +180,6 @@ return {
 				end,
 				desc = "[Snacks] Smart find files",
 			},
-			{
-				"<leader>,",
-				function()
-					require("snacks").picker.buffers()
-				end,
-				desc = "[Snacks] Buffers",
-			},
-			{
-				"<leader>sn",
-				function()
-					require("snacks").picker.notifications()
-				end,
-				desc = "[Snacks] Notification history",
-			},
-			-- find
 			{
 				"<leader>sb",
 				function()
@@ -214,7 +202,7 @@ return {
 				desc = "[Snacks] Projects",
 			},
 			{
-				"<leader>sr",
+				"<leader>sR",
 				function()
 					require("snacks").picker.recent()
 				end,
@@ -283,13 +271,13 @@ return {
 				end,
 				desc = "[Snacks] Search history",
 			},
-			{
-				"<leader>sa",
-				function()
-					require("snacks").picker.spelling()
-				end,
-				desc = "[Snacks] Spelling",
-			},
+			-- {
+			-- 	"<leader>ss",
+			-- 	function()
+			-- 		require("snacks").picker.spelling()
+			-- 	end,
+			-- 	desc = "[Snacks] Spelling",
+			-- },
 			{
 				"<leader>sA",
 				function()
@@ -326,19 +314,19 @@ return {
 				desc = "[Snacks] Diagnostics buffer",
 			},
 			{
-				"<leader>sH",
+				"<leader>sh",
 				function()
 					require("snacks").picker.help()
 				end,
 				desc = "[Snacks] Help pages",
 			},
-			{
-				"<leader>sh",
-				function()
-					require("snacks").picker.highlights()
-				end,
-				desc = "[Snacks] Highlights",
-			},
+			-- {
+			-- 	"<leader>sh",
+			-- 	function()
+			-- 		require("snacks").picker.highlights()
+			-- 	end,
+			-- 	desc = "[Snacks] Highlights",
+			-- },
 			{
 				"<leader>sI",
 				function()
@@ -374,15 +362,15 @@ return {
 				end,
 				desc = "[Snacks] Marks",
 			},
+			-- {
+			-- 	"<leader>sM",
+			-- 	function()
+			-- 		require("snacks").picker.man()
+			-- 	end,
+			-- 	desc = "[Snacks] Man pages",
+			-- },
 			{
-				"<leader>sM",
-				function()
-					require("snacks").picker.man()
-				end,
-				desc = "[Snacks] Man pages",
-			},
-			{
-				"<leader>sp",
+				"<leader>se",
 				function()
 					require("snacks").picker.lazy()
 				end,
@@ -542,9 +530,9 @@ return {
 
 					Snacks.toggle.option("spell", { name = "Spelling" }):map("<leader>ts")
 					Snacks.toggle.option("wrap", { name = "Wrap" }):map("<leader>tw")
-					Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>tL")
+					Snacks.toggle.option("relativenumber", { name = "Relative Number" }):map("<leader>tr")
 					Snacks.toggle.diagnostics():map("<leader>td")
-					Snacks.toggle.line_number():map("<leader>tl")
+					Snacks.toggle.line_number():map("<leader>tn")
 					Snacks.toggle
 						.option("conceallevel", { off = 0, on = vim.o.conceallevel > 0 and vim.o.conceallevel or 2 })
 						:map("<leader>tc")
@@ -552,7 +540,7 @@ return {
 					Snacks.toggle
 						.option("background", { off = "light", on = "dark", name = "Dark Background" })
 						:map("<leader>tb")
-					Snacks.toggle.inlay_hints():map("<leader>th")
+					-- Snacks.toggle.inlay_hints():map("<leader>th")
 					Snacks.toggle.indent():map("<leader>tg")
 					Snacks.toggle.dim():map("<leader>tD")
 					-- Toggle the profiler

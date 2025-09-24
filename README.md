@@ -76,17 +76,24 @@ Q :qa
 
 ### operator pending mode
 > 在normal模式下输入一个操作符，但是尚未指定操作范围时进入的模式
+
 > Normal 模式 → 按 `d` → 进入 Operator-Pending 模式 → 再按 `w`（删除一个单词）
+
 \<S-H\>（即H）移动到行首
 
 \<S-L\>（即L）移动到行尾
 
 ### select mode
 > 在 Visual 模式下使用<C-g>进入 Select 模式
+
 > 选择模式下的操作类似于普通文本编辑器中的选择操作
+
 > Visual模式下是选中文本，然后执行命令操作
+
 > Select模式下是选中文本，然后直接输入文本替换，或者使用Backspace删除
+
 > 替换或者删除文本后会自定进入insert模式
+
 J 与下一行交换位置
 
 K 与上一行交换位置
@@ -120,9 +127,13 @@ K 显示悬停文档
 
 :cc your prompt 调用内联助手，助手会评估提示词，选择直接写入代码还是打开聊天窗口
 > example: `:cc #{buffer} your prompt` `:'<,'>cc /explain`
+
 :CodeCompanionCmd your prompt创建neovim命令
+
 > 通过`#{var}`访问[变量](https://codecompanion.olimorris.dev/usage/chat-buffer/variables.html)，
+
 > 通过`/`运行[指令](https://codecompanion.olimorris.dev/usage/chat-buffer/slash-commands.html)，
+
 > 通过`@{tool}`访问[工具](https://codecompanion.olimorris.dev/usage/chat-buffer/tools.html#available-tools)
 
 #### normal mode
@@ -181,6 +192,7 @@ K 显示悬停文档
 
 #### command mode
 > 触发方式: `:`进入命令行，`/`和`?`进入搜索
+
 \<c-f\> 对常规搜索启用闪搜的开关
 
 ### neogen
@@ -216,6 +228,7 @@ sa \<char\> 在选中内容的两端添加char
 
 ### mini.comment
 > 定义了文本对象`gc`，可以选中整个注释块
+
 #### normal mode
 gc \<motion\> 注释/取消注释
 
@@ -226,6 +239,7 @@ gc 注释/取消注释选中内容
 
 ### multicursor
 > 多光标进入编辑模式时编辑内容只会改变其中一行，但是回到normal模式后，所有行都会被修改
+
 #### normal mode
 \<esc\> 退出多光标模式
 
@@ -240,11 +254,14 @@ mA 在选中内容之后插入光标
 
 ### conform.nvim
 > 保存时自动格式化
+
 \<leader\>tf 开启/关闭自动格式化
 
 ### trouble.nvim
 > 在Snacks选择器界面可以用tab选中文件，按<c-t>在trouble的窗口打开文件
+
 > 如果不选中则打开全部文件
+
 #### normal mode
 \<A-j\> 跳转到下一个诊断
 
@@ -262,8 +279,11 @@ mA 在选中内容之后插入光标
 
 ### snacks.nvim
 > 按<esc>从Insert模式返回到Normal模式
+
 > 再按一次<esc>退出Snacks选择器
+
 > 在normal模式下按?可以查看帮助
+
 #### picker
 \<Tab\> 选中并向上移动
 
@@ -446,6 +466,7 @@ d 删除
 
 ### gitsigns.nvim
 > ih 文本对象，选中当前hunk
+
 #### normal mode
 ]h 跳转到下一个hunk
 
@@ -477,7 +498,9 @@ d 删除
 
 ### nvim-hlslens
 > 执行搜索命令后，在匹配结果旁显示序号，如[1/5]
-> 覆盖vim原生的n, N, *, #, g*, g#
+
+> 覆盖vim原生的n, N, \*, \#, g\*, g\#
+
 #### normal mode
 n 下一个匹配项，居中屏幕
 

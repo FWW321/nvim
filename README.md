@@ -26,7 +26,7 @@ t代表terminal模式
 
 ## core.keymap
 ### insert mode
-jk = <Esc>
+jk = \<Esc\>
 
 \<C-h\> 左移
 

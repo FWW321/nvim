@@ -16,24 +16,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- 获取LSP客户端
 		local client = vim.lsp.get_client_by_id(event.data.client_id)
 
-		vim.diagnostic.config({
-			virtual_text = {
-				spacing = 4,
-				prefix = "●",
-			},
-			float = {
-				severity_sort = true,
-			},
-			serverity_sort = true,
-			signs = {
-				text = {
-					[vim.diagnostic.severity.ERROR] = "",
-					[vim.diagnostic.severity.WARN] = "",
-					[vim.diagnostic.severity.INFO] = "",
-					[vim.diagnostic.severity.HINT] = "",
-				},
-			},
-		})
 		-- 跳转到定义 goto definition
 		-- vim.keymap.set("n", "gd", vim.lsp.buf.definition, { buffer = event.buf, desc = "[LSP] Go to definition" })
 		-- 跳转到声明 goto declaration
@@ -71,14 +53,21 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- 内联提示（inlay hint）
 		-- 需要lsp支持
 		-- 显示函数参数和变量类型等信息
-		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
+			-- 默认启用
+			vim.lsp.inlay_hint.enable(true)
 			vim.keymap.set("n", "<leader>th", function()
 				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-			end, { buffer = event.buf, desc = "[LSP] Toggle inlay hints" })
+				if vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }) then
+					vim.notify("Inlay hints enabled")
+				else
+					vim.notify("Inlay hints disabled")
+				end
+			end, { desc = "[LSP] Toggle inlay hints" })
 		end
 		-- autocmd中的autocmd
 		-- 在光标停留时高亮当前符号的所有引用
-		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight, event.buf) then
 			local highlight_group = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
 			vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 				buffer = event.buf,
@@ -100,5 +89,86 @@ vim.api.nvim_create_autocmd("LspAttach", {
 				end,
 			})
 		end
+		-- 诊断信息配置
+		-- :help vim.diagnostic.Opts
+		vim.diagnostic.config({
+			virtual_text = {
+				spacing = 4,
+				prefix = "●",
+				source = "if_many",
+				format = function(diagnostic)
+					local diagnostic_message = {
+						[vim.diagnostic.severity.ERROR] = diagnostic.message,
+						[vim.diagnostic.severity.WARN] = diagnostic.message,
+						[vim.diagnostic.severity.INFO] = diagnostic.message,
+						[vim.diagnostic.severity.HINT] = diagnostic.message,
+					}
+					return diagnostic_message[diagnostic.severity]
+				end,
+			},
+			float = {
+				severity_sort = true,
+				-- 当有多个诊断来源时，显示来源
+				source = "if_many",
+			},
+			underline = {
+				-- 当诊断级别为ERROR时，才显示下划线
+				severity = vim.diagnostic.severity.ERROR,
+			},
+			serverity_sort = true,
+			signs = {
+				text = {
+					[vim.diagnostic.severity.ERROR] = "",
+					[vim.diagnostic.severity.WARN] = "",
+					[vim.diagnostic.severity.INFO] = "",
+					[vim.diagnostic.severity.HINT] = "💡",
+				},
+			},
+		})
+
+		-- 当光标处有诊断信息时自动显示
+		vim.api.nvim_create_autocmd("CursorHold", {
+			pattern = "*",
+			callback = function()
+				vim.diagnostic.open_float(nil, {
+					focusable = false,
+					close_events = { "BufHidden", "CursorMoved", "CursorMovedI", "InsertCharPre" },
+					border = "rounded",
+					scope = "cursor",
+				})
+			end,
+		})
+
+		-- 跳转到诊断信息的快捷键
+		-- vim.keymap.set("n", "[h", function()
+		-- 	vim.diagnostic.jump({ severity = vim.diagnostic.severity.HINT, count = -1 })
+		-- end, { desc = "[LSP] Go to previous hint" })
+		-- vim.keymap.set("n", "]h", function()
+		-- 	vim.diagnostic.jump({ severity = vim.diagnostic.severity.HINT, count = 1 })
+		-- end, { desc = "[LSP] Go to next hint" })
+		vim.keymap.set("n", "[i", function()
+			vim.diagnostic.jump({ severity = vim.diagnostic.severity.INFO, count = -1 })
+		end, { desc = "[LSP] Go to previous info" })
+		vim.keymap.set("n", "]i", function()
+			vim.diagnostic.jump({ severity = vim.diagnostic.severity.INFO, count = 1 })
+		end, { desc = "[LSP] Go to next info" })
+		vim.keymap.set("n", "[w", function()
+			vim.diagnostic.jump({ severity = vim.diagnostic.severity.WARN, count = -1 })
+		end, { desc = "[LSP] Go to previous warn" })
+		vim.keymap.set("n", "]w", function()
+			vim.diagnostic.jump({ severity = vim.diagnostic.severity.WARN, count = 1 })
+		end, { desc = "[LSP] Go to next warn" })
+		vim.keymap.set("n", "[e", function()
+			vim.diagnostic.jump({ severity = vim.diagnostic.severity.ERROR, count = -1 })
+		end, { desc = "[LSP] Go to previous error" })
+		vim.keymap.set("n", "]e", function()
+			vim.diagnostic.jump({ severity = vim.diagnostic.severity.ERROR, count = 1 })
+		end, { desc = "[LSP] Go to next error" })
+		vim.keymap.set("n", "<A-j>", function()
+			vim.diagnostic.jump({ count = 1 })
+		end, { desc = "[LSP] Go to next diagnostic" })
+		vim.keymap.set("n", "<A-k>", function()
+			vim.diagnostic.jump({ count = -1 })
+		end, { desc = "[LSP] Go to previous diagnostic" })
 	end,
 })

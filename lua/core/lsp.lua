@@ -4,6 +4,7 @@
 -- nvim 0.11会自动配置capabilities
 -- lsp目录下的文件可以随便命名，但为了兼容性和可读性，建议参考lspconfig的命名方式
 -- 可以参考lspconfig仓库下的lsp目录下的lsp配置文件进行配置
+-- lazydev插件会自动调用vim.lsp.enable("lua_ls")
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("rust_analyzer")
 vim.lsp.enable("taplo")
@@ -55,14 +56,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- 显示函数参数和变量类型等信息
 		if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint, event.buf) then
 			-- 默认启用
-			vim.lsp.inlay_hint.enable(true)
+			-- 延迟3秒启用，确保lsp初始化完成
+			vim.defer_fn(function()
+				vim.lsp.inlay_hint.enable(true)
+			end, 3000)
 			vim.keymap.set("n", "<leader>th", function()
-				vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }))
-				if vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf }) then
-					vim.notify("Inlay hints enabled")
-				else
-					vim.notify("Inlay hints disabled")
-				end
+				local enabled = not vim.lsp.inlay_hint.is_enabled({ bufnr = event.buf })
+				vim.lsp.inlay_hint.enable(enabled)
+				vim.notify("Inlay hints " .. (enabled and "enabled" or "disabled"), vim.log.levels.INFO)
 			end, { desc = "[LSP] Toggle inlay hints" })
 		end
 		-- autocmd中的autocmd
